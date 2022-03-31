@@ -1,0 +1,2 @@
+# big-py-lambda-poc
+With a 512 MB limit on the deployment artifact of AWS Lambda (including tiers), it is quite a challenge to deploy Python Lambdas that contain very large binary dependencies (such as xgboost or pytorch). AWS provides some tools with different up and downsides to overcome this problem. Here i want to compare different Solutions for the deployment of very large python Dependencies for AWS Lambda.
