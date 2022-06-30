@@ -1,4 +1,4 @@
-import {Duration} from "aws-cdk-lib";
+import {Duration, Size} from "aws-cdk-lib";
 import {Construct} from "constructs";
 import {Code, Function, Runtime} from "aws-cdk-lib/aws-lambda";
 
@@ -22,6 +22,7 @@ export class BigLambdaS3 extends Construct {
             timeout: Duration.minutes(10),
             deadLetterQueueEnabled: true,
             code: Code.fromAsset(`${__dirname}/../lambda`),
+            ephemeralStorageSize: Size.gibibytes(1),
             environment: {
                 'DEP_BUCKET': assetCodeLocation?.bucketName ?? '',
                 'DEP_KEY': assetCodeLocation?.objectKey ?? '',
