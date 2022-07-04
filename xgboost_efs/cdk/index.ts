@@ -4,6 +4,7 @@ import {Code, Runtime} from "aws-cdk-lib/aws-lambda";
 import {BigFunction} from "./efs-asset";
 import {Vpc} from "aws-cdk-lib/aws-ec2";
 import {AssetCode} from "aws-cdk-lib/aws-lambda/lib/code";
+import {join} from "path";
 
 export class BigLambdaEfs extends Construct {
     public lambda;
@@ -11,7 +12,7 @@ export class BigLambdaEfs extends Construct {
     constructor(scope: Construct, id: string) {
         super(scope, id);
 
-        const dep = buildDepAsset('xgboost')
+        const dep = buildBigPythonDepAsset('xgboost')
         this.lambda = this.createLambda(dep)
     }
 
@@ -21,7 +22,7 @@ export class BigLambdaEfs extends Construct {
         return new BigFunction(this, functionName, {
             bigPyDep: dep,
             functionName: functionName,
-            runtime: Runtime.PYTHON_3_8,
+            runtime: Runtime.PYTHON_3_9,
             memorySize: 128,
             vpc,
             timeout: Duration.minutes(10),
@@ -32,16 +33,17 @@ export class BigLambdaEfs extends Construct {
     }
 }
 
-function buildDepAsset(folder: string): AssetCode {
-    return Code.fromAsset(`${__dirname}/../deps/${folder}`, {
-        bundling: {
-            image: Runtime.PYTHON_3_8.bundlingImage,
-            user: 'root',
-            command: [
-                'bash',
-                '-c',
-                `pip install -r requirements.txt -t /asset-output/python && find /asset-output/python -name '*.so' -exec strip {} +`,
-            ],
-        },
-    });
+export function buildBigPythonDepAsset(depName: string) {
+  const path = join(__dirname, '..', 'deps', depName);
+  return buildPyAsset(path, false);
+}
+
+export function buildPyAsset(path: string, strip = true) {
+  const stripCommand = strip ? `&& find /asset-output -name '*.so' -exec strip {} +` : '';
+  return Code.fromAsset(path, {
+    bundling: {
+      image: Runtime.PYTHON_3_9.bundlingImage,
+      command: ['bash', '-c', `pip install -r requirements.txt -t /asset-output && rm -rf /asset-output/botocore* /asset-output/future* ${stripCommand}`],
+    },
+  });
 }

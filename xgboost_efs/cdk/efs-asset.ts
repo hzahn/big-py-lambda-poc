@@ -1,15 +1,14 @@
-import {IVpc, SubnetSelection, SubnetType} from 'aws-cdk-lib/aws-ec2';
-import {CustomResource, Duration, RemovalPolicy, Size, StackProps} from 'aws-cdk-lib';
+import { IVpc, SubnetSelection, SubnetType } from 'aws-cdk-lib/aws-ec2';
+import { CustomResource, Duration, RemovalPolicy, StackProps } from 'aws-cdk-lib';
 import * as efs from 'aws-cdk-lib/aws-efs';
-import {AccessPoint, AccessPointProps, PerformanceMode, ThroughputMode} from 'aws-cdk-lib/aws-efs';
-import {AssetCode, Code, FileSystem, Function, IFunction, Runtime} from 'aws-cdk-lib/aws-lambda';
+import { AccessPoint, AccessPointProps, PerformanceMode, ThroughputMode } from 'aws-cdk-lib/aws-efs';
+import { AssetCode, Code, FileSystem, Function, IFunction, Runtime } from 'aws-cdk-lib/aws-lambda';
 import * as path from 'path';
-import {join} from 'path';
-import {PolicyStatement} from 'aws-cdk-lib/aws-iam';
-import {Construct} from 'constructs';
-import {Provider} from 'aws-cdk-lib/custom-resources';
-import {FunctionProps} from 'aws-cdk-lib/aws-lambda/lib/function';
-
+import { join } from 'path';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Construct } from 'constructs';
+import { Provider } from 'aws-cdk-lib/custom-resources';
+import { FunctionProps } from 'aws-cdk-lib/aws-lambda/lib/function';
 
 const OWNER_GID = '1001';
 const OWNER_UID = '1001';

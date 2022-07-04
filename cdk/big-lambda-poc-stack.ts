@@ -21,8 +21,8 @@ export class BigLambdaPocStack extends Stack {
         const lambdaEfs = new BigLambdaEfs(this, 'bigLambdaEfs');
         const lambdas = [
             lambdaCustomImage.lambda,
-          //  lambdaS3.lambda,
-          //  lambdaEfs.lambda,
+            lambdaS3.lambda,
+           // lambdaEfs.lambda,
         ];
         this.createStateMachine(`${props.lambdaFolder}StateMachine`, lambdas);
     }

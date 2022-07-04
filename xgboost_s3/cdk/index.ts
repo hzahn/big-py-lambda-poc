@@ -1,6 +1,7 @@
 import {Duration, Size} from "aws-cdk-lib";
 import {Construct} from "constructs";
 import {Code, Function, Runtime} from "aws-cdk-lib/aws-lambda";
+import {Bucket} from "aws-cdk-lib/aws-s3";
 
 export class BigLambdaS3 extends Construct {
     public lambda;
@@ -11,11 +12,11 @@ export class BigLambdaS3 extends Construct {
     }
 
     private createLambda() {
-        const asset = buildZippedDepAsset('xgboost')
+        const asset = buildDepAsset('xgboost')
         const assetCodeLocation = asset.bind(this).s3Location;
 
         const functionName = 'XgBoostS3Lambda';
-        return new Function(this, functionName, {
+        const lambda =  new Function(this, functionName, {
             functionName: functionName,
             runtime: Runtime.PYTHON_3_8,
             memorySize: 128,
@@ -29,22 +30,11 @@ export class BigLambdaS3 extends Construct {
             },
             handler: `main.handler`,
         });
+        Bucket.fromBucketName(this, 'cdk-bucket-s3', assetCodeLocation?.bucketName ?? '').grantRead(lambda);
+        return lambda
+
     }
 
-}
-
-function buildZippedDepAsset(folder: string) {
-    return Code.fromAsset(`${__dirname}/../layer/${folder}`, {
-        bundling: {
-            image: Runtime.PYTHON_3_8.bundlingImage,
-            user: 'root',
-            command: [
-                'bash',
-                '-c',
-                `pip install -r requirements.txt -t /python && find /python -name '*.so' -exec strip {} + && mkdir /asset-output/python && zip -9 -r /asset-output/python/layer.zip /python && ls -la /asset-output`,
-            ],
-        },
-    });
 }
 
 function buildDepAsset(folder: string) {

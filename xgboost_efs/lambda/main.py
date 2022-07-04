@@ -3,6 +3,7 @@ import os
 import sys
 start = time.time()
 print(os.listdir('/mnt/opt/python'))
+print('PAYTHONPATH: ', os.environ.get('PYTHONPATH'))
 import xgboost
 
 
