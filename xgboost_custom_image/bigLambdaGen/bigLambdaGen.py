@@ -11,6 +11,7 @@ bucket = os.environ.get('CODE_BUCKET')
 key = os.environ.get('CODE_KEY')
 entry_point = os.environ.get('CODE_ENTRY_POINT')
 layer_arns = os.environ.get('LAYER_ARNS')
+entry_point_function = None
 
 
 def load_function_code():
@@ -38,7 +39,7 @@ def load_layers():
     try:
         lambda_client = boto3.client('lambda')
         for layer_arn in layer_arns.split(';'):
-            layer_version_info = lambda_client.get_layer_version_by_arn(layer_arn)
+            layer_version_info = lambda_client.get_layer_version_by_arn(Arn=layer_arn)
             layer_location = layer_version_info.get('Content').get('Location')
             get_layer_response = requests.get(layer_location)
             layer_file_name = layer_arn + '.zip'

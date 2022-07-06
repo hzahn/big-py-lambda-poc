@@ -19,7 +19,7 @@ export class BigLambdaCustomImage extends Construct {
             }),
             environment: { stage: 'my' },
             memorySize: 128,
-            architecture: Architecture.ARM_64,
+            architecture: Architecture.X86_64,
             timeout: Duration.minutes(10),
         })
     }
@@ -34,7 +34,7 @@ export class BigLambdaCustomImage extends Construct {
                 file: `image/Dockerfile`
             }),
             memorySize: 128,
-            architecture: Architecture.ARM_64,
+            architecture: Architecture.X86_64,
             timeout: Duration.minutes(10),
             environment: {
               CODE_BUCKET: assetCodeLocation?.bucketName ?? '',

@@ -18,7 +18,7 @@ export class BigLambdaPocStack extends Stack {
         super(scope, id, props);
         const lambdaCustomImage = new BigLambdaCustomImage(this, 'bigLambdaCustomImage');
         const lambdaS3 = new BigLambdaS3(this, 'bigLambdaS3');
-        const lambdaEfs = new BigLambdaEfs(this, 'bigLambdaEfs');
+        // const lambdaEfs = new BigLambdaEfs(this, 'bigLambdaEfs');
         const lambdas = [
             lambdaCustomImage.lambda,
             // lambdaS3.lambda,
