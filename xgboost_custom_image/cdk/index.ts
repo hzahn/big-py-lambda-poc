@@ -56,7 +56,7 @@ interface BigLambdaCustomImagev2Props extends DockerImageFunctionProps {
 export class BigLambdaCustomImagev2 extends DockerImageFunction {
     constructor(scope: Construct, id: string, props: BigLambdaCustomImagev2Props) {
         const assetCodeLocation = props.functionCode.bind(scope).s3Location;
-        const layerArns = props.layers.map( l => l.layerVersionArn ).join(';');
+        const layerArns = props.layers ? props.layers.map( l => l.layerVersionArn ).join(';') : '';
 
         const environment = {
             ...props.environment,
@@ -72,10 +72,7 @@ export class BigLambdaCustomImagev2 extends DockerImageFunction {
             }
 
 
-
         super(scope, id, props_changed);
-        const a =  new Function(scope, 'asd', {layers});
-
         Bucket.fromBucketName(scope, 'cdk-bucket-ci', assetCodeLocation?.bucketName ?? '').grantRead(this);
     }
 }
