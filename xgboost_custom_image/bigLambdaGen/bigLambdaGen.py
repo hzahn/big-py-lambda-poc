@@ -38,24 +38,29 @@ def load_function_code():
 def load_layers():
     try:
         lambda_client = boto3.client('lambda')
+        print(layer_arns)
         for layer_arn in layer_arns.split(';'):
+            print(layer_arn)
             layer_version_info = lambda_client.get_layer_version_by_arn(Arn=layer_arn)
             layer_location = layer_version_info.get('Content').get('Location')
             get_layer_response = requests.get(layer_location)
             layer_file_name = layer_arn + '.zip'
-            if not os.path.exists('/tmp/layers'):
-                os.mkdir('/tmp/layers')
-            with open(layer_file_name, 'wb') as layer_zip:
+            layers_path = '/tmp/layers'
+            layer_file_path = os.path.join(layers_path, layer_file_name)
+            if not os.path.exists(layers_path):
+                os.mkdir(layers_path)
+            with open(layer_file_path, 'wb') as layer_zip:
                 layer_zip.write(get_layer_response.content)
-            with zipfile.ZipFile(layer_file_name, 'r') as zip_ref:
-                zip_ref.extractall('/tmp/layers')
+            print(os.listdir(layers_path))
+            with zipfile.ZipFile(layer_file_path, 'r') as zip_ref:
+                zip_ref.extractall(layers_path)
             sys.path.append('/tmp/layers/python')
     except Exception as e:
         print('Failed to extract layer code', e)
 
 
-load_function_code()
 load_layers()
+load_function_code()
 
 
 def handler(event, context):
