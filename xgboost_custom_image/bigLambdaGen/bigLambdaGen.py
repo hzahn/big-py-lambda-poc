@@ -19,17 +19,13 @@ def load_function_code():
     try:
         s3 = boto3.client('s3')
         s3.download_file(bucket, key, '/tmp/code.zip')
-        print(os.listdir('/tmp'))
         if not os.path.exists('/tmp/code'):
             os.mkdir('/tmp/code')
         with zipfile.ZipFile('/tmp/code.zip', 'r') as zip_ref:
             zip_ref.extractall('/tmp/code')
-        print(os.listdir('/tmp/code'))
         sys.path.append('/tmp/code')
-
         p, m = entry_point.rsplit('.', 1)
         mod = import_module(p)
-        print('module content:', dir(mod))
         entry_point_function = getattr(mod, m)
     except Exception as e:
         print('Failed to extract lambda code', e)
@@ -38,9 +34,7 @@ def load_function_code():
 def load_layers():
     try:
         lambda_client = boto3.client('lambda')
-        print(layer_arns)
         for layer_arn in layer_arns.split(';'):
-            print(layer_arn)
             layer_version_info = lambda_client.get_layer_version_by_arn(Arn=layer_arn)
             layer_location = layer_version_info.get('Content').get('Location')
             get_layer_response = requests.get(layer_location)
@@ -51,7 +45,6 @@ def load_layers():
                 os.mkdir(layers_path)
             with open(layer_file_path, 'wb') as layer_zip:
                 layer_zip.write(get_layer_response.content)
-            print(os.listdir(layers_path))
             with zipfile.ZipFile(layer_file_path, 'r') as zip_ref:
                 zip_ref.extractall(layers_path)
             sys.path.append('/tmp/layers/python')
